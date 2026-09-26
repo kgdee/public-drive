@@ -34,7 +34,7 @@ const TextModal = (() => {
     iconInput.value = "";
     iconPreview.src = currentItem?.icon || `assets/images/file-text.png`;
     titleEl.textContent = currentItem ? `Edit ${currentItem.name}` : `Create new text`;
-    nameInput.value = currentItem?.name || createItemName(`New text`);
+    nameInput.value = currentItem?.name || createItemName(`New text`, ".txt");
     contentInput.value = currentItem?.content || "";
 
     submitBtn.innerHTML = currentItem ? `Update` : `Create`;
@@ -81,11 +81,6 @@ const TextModal = (() => {
   }
 
   async function copyText() {
-    // Select the text inside the textarea for visual feedback
-    contentInput.select();
-    contentInput.setSelectionRange(0, 99999); // For mobile devices
-
-    // Write the text to the clipboard
     await navigator.clipboard.writeText(contentInput.value);
     Toast.show("Text copied successfully!");
   }

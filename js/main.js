@@ -16,6 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleTheme(darkTheme);
 });
 
+function updateUI() {
+  itemsGrid.querySelectorAll(".selected").forEach((el) => el.classList.remove("selected"));
+  if (selectedItem) itemsGrid.querySelector(`[data-id="${selectedItem.id}"]`).classList.add("selected");
+}
+
 async function uploadFile(file) {
   let content = "";
 
@@ -98,6 +103,8 @@ function displayItems(items) {
   items = items || currentItems;
 
   itemsGrid.innerHTML = items.map((item) => (item.type === "folder" ? getFolderHTML(item) : getFileHTML(item))).join(" ") || `<span class="message">Folder is empty</span>`;
+
+  updateUI();
 }
 
 function handleItemClick(itemId) {
@@ -121,21 +128,21 @@ function handleItemClick(itemId) {
 function selectItem(item) {
   deselectItems();
   selectedItem = item;
-  itemsGrid.querySelector(`[data-id="${selectedItem.id}"]`).classList.add("selected");
+  updateUI();
 }
 
 function deselectItems() {
   if (!selectedItem) return;
-  itemsGrid.querySelectorAll(".selected").forEach((el) => el.classList.remove("selected"));
   selectedItem = null;
+  updateUI();
 }
 
 function selectAdjacentItem(direction = 1) {
-  if (!currentItems || currentItems.length <= 0) return
+  if (!currentItems || currentItems.length <= 0) return;
 
   selectedItem = selectedItem || currentItems[0];
 
-  const index = currentItems.findIndex(item => item.id === selectedItem.id)
+  const index = currentItems.findIndex((item) => item.id === selectedItem.id);
   const item = currentItems[index + direction];
   if (!item) return;
 
@@ -154,13 +161,13 @@ function editItem() {
   }
 }
 
-function createItemName(baseName) {
+function createItemName(baseName, extension = "") {
   let count = 1;
   let name;
   do {
     name = `${baseName}${count > 1 ? ` (${count})` : ""}`;
     count++;
-  } while (currentItems.some((item) => item.name === `${name}.txt`));
+  } while (currentItems.some((item) => item.name === `${name}${extension}`));
   return name;
 }
 
